@@ -1,0 +1,4 @@
+# Optional experiment logging and LMDB input support.
+# Neither is needed by the standalone five-metric evaluator.
+wandb==0.16.2
+lmdb==1.4.1

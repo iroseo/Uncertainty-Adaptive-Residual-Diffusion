@@ -1,0 +1,12 @@
+# Suggested source-preview dependency profile, not a historical or fully validated platform lock.
+# Python 3.10 recommended. Install a matching CPU/CUDA torch + torchvision build.
+numpy==1.24.3
+Pillow==10.4.0
+scikit-image==0.21.0
+torch==2.4.1
+torchvision==0.19.1
+lpips==0.1.4
+torch-fidelity==0.4.0
+opencv-python==4.9.0.80
+tqdm==4.66.2
+tensorboardX==2.6.2.2
