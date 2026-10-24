@@ -1,0 +1,142 @@
+{
+  "name": "UARD_SAR2Opt_512_S2_full",
+  "phase": "train",
+  "gpu_ids": [
+    0
+  ],
+  "stage": 2,
+  "ddim_steps": 1,
+  "loss_w": {
+    "fft_w": 0,
+    "lpips_w": 1,
+    "lambda_gan": 0,
+    "lcondition_w": 0
+  },
+  "path": {
+    "log": "logs",
+    "tb_logger": "tb_logger",
+    "results": "results",
+    "checkpoint": "checkpoint",
+    "resume_state": "checkpoints/REPLACE_WITH_S1",
+    "resume_training": false
+  },
+  "datasets": {
+    "train": {
+      "name": "SAR2Opt",
+      "mode": "translate",
+      "dataroot": "datasets/SAR2Opt/train",
+      "datatype": "img",
+      "l_resolution": 512,
+      "r_resolution": 512,
+      "batch_size": 2,
+      "num_workers": 4,
+      "use_shuffle": true,
+      "data_len": -1,
+      "raw_sar": true,
+      "sar_dir": "SAR",
+      "optical_dir": "Optical"
+    },
+    "val": {
+      "name": "SAR2Opt",
+      "mode": "translate",
+      "dataroot": "datasets/SAR2Opt/val",
+      "datatype": "img",
+      "l_resolution": 512,
+      "r_resolution": 512,
+      "data_len": -1,
+      "raw_sar": true,
+      "num_workers": 0,
+      "sar_dir": "SAR",
+      "optical_dir": "Optical"
+    }
+  },
+  "model": {
+    "which_model_G": "sr3",
+    "finetune_norm": false,
+    "unet": {
+      "in_channel": 3,
+      "out_channel": 3,
+      "condition_ch": 3,
+      "inner_channel": 64,
+      "norm_groups": 16,
+      "channel_multiplier": [
+        1,
+        2,
+        4,
+        8,
+        16
+      ],
+      "attn_res": [],
+      "res_blocks": 1,
+      "dropout": 0
+    },
+    "beta_schedule": {
+      "train": {
+        "schedule": "linear",
+        "n_timestep": 1000,
+        "linear_start": 1e-06,
+        "linear_end": 0.01,
+        "ddim": 0,
+        "lq_noiselevel": 0
+      },
+      "val": {
+        "schedule": "linear",
+        "n_timestep": 1,
+        "linear_start": 1e-06,
+        "linear_end": 0.01,
+        "ddim": 1,
+        "lq_noiselevel": 0
+      }
+    },
+    "diffusion": {
+      "image_size": 512,
+      "channels": 3,
+      "conditional": true
+    },
+    "uard": {
+      "enabled": true,
+      "mode": "full",
+      "sar_channels": 3,
+      "anchor_width": 32,
+      "w_min": 0.1,
+      "beta_T": 1.0,
+      "log_scale_min": -5.0,
+      "log_scale_max": 1.0,
+      "lambda_u": 1.0,
+      "lambda_R": 1.0,
+      "lambda_eps": 1.0,
+      "lambda_rec": 1.0,
+      "freeze_anchor": true,
+      "portable_pool": true,
+      "anchor_checkpoint": "checkpoints/REPLACE_WITH_S0_gen.pth",
+      "noise_loss": "standard",
+      "conditioning": "sar_anchor_uncertainty"
+    }
+  },
+  "train": {
+    "n_iter": 50000,
+    "val_freq": 5000,
+    "save_checkpoint_freq": 5000,
+    "print_freq": 50,
+    "optimizer": {
+      "type": "adam",
+      "lr": 5e-05
+    },
+    "ema_scheduler": {
+      "step_start_ema": 5000,
+      "update_ema_every": 1,
+      "ema_decay": 0.9999
+    },
+    "scheduler": {
+      "type": "MultiStepLR",
+      "milestones": [],
+      "gamma": 0.5
+    },
+    "validation_enabled": true,
+    "sample_train_preview": false,
+    "select_best_by_psnr": true
+  },
+  "wandb": {
+    "project": "UARD_SAR2Opt_512"
+  }
+}
